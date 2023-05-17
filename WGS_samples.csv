@@ -1,0 +1,2 @@
+name,fastq,fastq2,strandness
+SRR062634,/root/projects/WGS/raw_reads/SRR062634_1.filt.fastq.gz,/root/projects/WGS/raw_reads/SRR062634_2.filt.fastq.gz,Ignore
