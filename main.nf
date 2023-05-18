@@ -58,6 +58,6 @@ refrences = file(params.refrences)
 FASTQC(reads)
 BWA_INDEX(ref)
 BWA_ALIGNER (ref,BWA_INDEX.out.index,reads)
-DEDUP_GATK()
-BASE_RECAB_GATK()
+DEDUP_GATK(BWA_ALIGNER.out.ppair_aligned)
+//BASE_RECAB_GATK()
 }
