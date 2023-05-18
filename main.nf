@@ -17,9 +17,13 @@ log.info """\
     """
     .stripIndent()
 
-params.ref_fasta = params.genomes[ params.genome ]?.ref_fasta
+params.ref = params.genomes[ params.genome ]?.ref
 params.sites     = params.genomes[ params.genome ]?.sites
+params.sites_tbi = params.genomes[ params.genome ]?.sites_tbi
 params.refrences = params.genomes[ params.genome ]?.refrences
+params.fasta_index =params.genomes[ params.genome ]?.fasta_index
+params.dict      =params.genomes[ params.genome ]?.dict
+
 
 include { FASTQC } from './modules/fastqc'
 include { BWA_INDEX } from './modules/bwa_index'
@@ -51,13 +55,15 @@ workflow{
         )
     }
 
-ref = file(params.ref_fasta)
+ref = file(params.ref)
 known_sites = file(params.sites)
-refrences = file(params.refrences)
+sites_tbi   = file(params.sites_tbi)
+fasta_index = file(params.fasta_index)
+dict =  file(params.dict)
 
 FASTQC(reads)
 BWA_INDEX(ref)
 BWA_ALIGNER (ref,BWA_INDEX.out.index,reads)
 DEDUP_GATK(BWA_ALIGNER.out.ppair_aligned)
-//BASE_RECAB_GATK()
+BASE_RECAB_GATK(DEDUP_GATK.out.dedup_bam,ref,fasta_index,dict,known_sites,sites_tbi)
 }

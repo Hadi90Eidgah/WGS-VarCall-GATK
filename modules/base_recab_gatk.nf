@@ -6,15 +6,18 @@ process BASE_RECAB_GATK {
     publishDir "${params.outdir}/${name}/BQSR_model_generated", mode: 'copy'
 
     input:
-    tuple val(name), path(dedup_bam)
+    path(dedup_bam)
     path ref
+    path fasta_index
+    path dict
     path sites
+    path sites_tbi
 
     output:
     path('*.table') , emit: model
 
     script:
     """
-    gatk BaseRecalibrator -I ${dedup_bam} -R ${ref} --known-sites ${sites} -O recal_data.table
+    gatk BaseRecalibrator -I ${dedup_bam} -R ${ref} --known-sites ${sites} -O ${dedup_bam.baseName}_recal_data.table
     """
 }
