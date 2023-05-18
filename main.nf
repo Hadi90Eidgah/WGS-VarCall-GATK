@@ -24,6 +24,9 @@ params.refrences = params.genomes[ params.genome ]?.refrences
 include { FASTQC } from './modules/fastqc'
 include { BWA_INDEX } from './modules/bwa_index'
 include { BWA_ALIGNER } from './modules/bwa_aligner'
+include { DEDUP_GATK } from './modules/dedup_gatk'
+include { BASE_RECAB_GATK } from './modules/base_recab_gatk'
+
 workflow{
     //ch_samplesheet = file(params.input, checkIfExists: true)
     reads = Channel
@@ -55,4 +58,6 @@ refrences = file(params.refrences)
 FASTQC(reads)
 BWA_INDEX(ref)
 BWA_ALIGNER (ref,BWA_INDEX.out.index,reads)
+DEDUP_GATK()
+BASE_RECAB_GATK()
 }
