@@ -30,6 +30,9 @@ include { BWA_INDEX } from './modules/bwa_index'
 include { BWA_ALIGNER } from './modules/bwa_aligner'
 include { DEDUP_GATK } from './modules/dedup_gatk'
 include { BASE_RECAB_GATK } from './modules/base_recab_gatk'
+include { APPLYBQSR } from './modules/applyBQSR_gatk'
+include { SUMMERY_METRICS } from './modules/summeryMetrics_QC_gatk'
+include { HAPLOTYPECALLER } from './modules/Variant_Call_gatk'
 
 workflow{
     //ch_samplesheet = file(params.input, checkIfExists: true)
@@ -66,4 +69,7 @@ BWA_INDEX(ref)
 BWA_ALIGNER (ref,BWA_INDEX.out.index,reads)
 DEDUP_GATK(BWA_ALIGNER.out.ppair_aligned)
 BASE_RECAB_GATK(DEDUP_GATK.out.dedup_bam,ref,fasta_index,dict,known_sites,sites_tbi)
+APPLYBQSR(DEDUP_GATK.out.dedup_bam,ref,BASE_RECAB_GATK.out.model,fasta_index,dict)
+SUMMERY_METRICS(ref,APPLYBQSR.out.dedup_bqsr_bam)
+HAPLOTYPECALLER(ref,APPLYBQSR.out.dedup_bqsr_bam,fasta_index,dict)
 }

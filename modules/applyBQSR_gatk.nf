@@ -1,20 +1,22 @@
 // vim: set filetype=groovy:
 process APPLYBQSR {
-    tag "${name}"
+    tag "Applies the adjustments calculated by the Base Quality Score Recalibration (BQSR)"
     cpus 4
     memory '12 GB'
-    publishDir "${params.outdir}/${name}/deduplicated_aligned", mode: 'copy'
+    publishDir "${params.outdir}/applied_BQSR", mode: 'copy'
 
     input:
-    tuple val(name), path(dedup_bam)
+    path(dedup_bam)
     path ref
     path model
+    path fasta_index
+    path dict
 
     output:
-    tuple val(name), path('*_dedup_bqsr.bam') , emit: dedup_bqsr_bam
+    path('*.bam') , emit: dedup_bqsr_bam
 
     script:
     """
-    gatk ApplyBQSR -I ${dedup_bam} -R ${ref} --bqsr-recal-file {$model} -O ${name}_sorted_dedup_bqsr_reads.bam 
+    gatk ApplyBQSR -I ${dedup_bam} -R ${ref} --bqsr-recal-file ${model} -O ${dedup_bam.baseName}_sorted_bqsr_reads.bam 
     """
 }
